@@ -1,0 +1,67 @@
+﻿@page "/"
+@inject WeatherService WeatherService
+@using WeatherApp.Data
+
+
+<h1>Weather Information</h1>
+
+<div>
+    Latitude: <input type="number" @bind="latitude" @oninput="OnLatitudeInput" />
+    Longitude: <input type="number" @bind="longitude" @oninput="OnLongitudeInput" />
+    <button @onclick="GetWeather">Submit</button>
+</div>
+
+@if (weather != null)
+{
+    <div>
+        <h2>Current Temperature: @($"{weather.Temperature} °C")</h2>
+        <h2>Precipitation: @($"{weather.Precipitation} mm")</h2>
+        <h2>Wind Speed: @($"{weather.WindSpeed} m/s")</h2>
+    </div>
+}
+else
+{
+    <p>No weather information available.</p>
+}
+
+@code {
+    private double latitude;
+    private double longitude;
+    private WeatherModel? weather;
+
+    private async Task GetWeather()
+    {
+        if (latitude != 0 && longitude != 0)
+        {
+            weather = await WeatherService.GetWeatherAsync(latitude, longitude);
+        }
+        else
+        {
+            // Handle latitude or longitude not provided
+        }
+    }
+
+    private void OnLatitudeInput(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double value))
+        {
+            latitude = value;
+        }
+        else
+        {
+            // Handle invalid input
+        }
+    }
+
+    private void OnLongitudeInput(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double value))
+        {
+            longitude = value;
+        }
+        else
+        {
+            // Handle invalid input
+        }
+    }
+}
